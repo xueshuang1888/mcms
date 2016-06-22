@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!-- 字段管理持久化层XML配置继承IFieldDao -->
+<mapper namespace="com.mingsoft.business.dao.IReservationDao">
+	<sql id="column_list">
+		ID,USER_NAME,PHONE_NUM,RESERVATION_DATE_BEGIN,RESERVATION_DATE_END,COMMENT,CREATE_TIME,DEAL_FLAG,OPEN_ID,MODIFY_TIME
+	</sql>
+	
+	<!-- 表字段与实体属性对应，供返回实体信息时使用 -->
+	<resultMap id="resultMapField" type="com.mingsoft.business.entity.ReservationEntity">
+		<id column="ID" property="id" />
+		<result column="USER_NAME" property="userName" />
+		<result column="PHONE_NUM" property="phoneNum" />
+		<result column="RESERVATION_DATE_BEGIN" property="reservationDateBegin" />
+		<result column="RESERVATION_DATE_END" property="reservationDateEnd" />
+		<result column="COMMENT" property="comment" />
+		<result column="DEAL_FLAG" property="dealFlag" />
+		<result column="OPEN_ID" property="openId" />
+		<result column="MODIFY_TIME" property="modifyTime" />
+	</resultMap>
+	
+
+
+	<!-- 查询所有字段开始 -->
+	<select id="queryAll" resultMap="resultMapField">
+		select * from t_reservation;
+	</select>
+	<!-- 查询所有字段结束 -->
+	
+	
+	<!-- 统计指定表单的字段数量开始 -->
+	<select id="queryCountByCond" resultType="int" parameterType="com.mingsoft.business.entity.ReservationEntity" >
+		select count(*) from t_reservation where 1=1 
+		<if test="userName !=null and userName != '' ">
+			and user_name like CONCAT(CONCAT('%', #{userName}), '%')
+		</if>
+		<if test="phoneNum !=null and phoneNum != '' ">
+			and phone_num = CONCAT(CONCAT('%', #{phoneNum}), '%')
+		</if>
+		<if test="reservationDateBegin !=null ">
+			and reservation_date_begin &gt;= #{reservationDateBegin}
+		</if>
+		
+		<if test="reservationDateEnd !=null ">
+			and reservation_date_end &lt;= #{reservationDateEnd}
+		</if>
+	</select>
+	<!-- 统计指定表单的字段数量结束 -->
+	
+	<!-- 字段列表分页查询开始 -->
+	<select id="queryByPage" resultMap="resultMapField" parameterType="com.mingsoft.business.entity.ReservationEntity">
+		select * from t_reservation where 1=1 
+		<if test="userName !=null and userName != '' ">
+			and user_name like CONCAT(CONCAT('%', #{userName}), '%')
+		</if>
+		<if test="phoneNum !=null and phoneNum != '' ">
+			and phone_num = CONCAT(CONCAT('%', #{phoneNum}), '%')
+		</if>
+		<if test="reservationDateBegin !=null ">
+			and reservation_date_begin &gt;= #{reservationDateBegin}
+		</if>
+		
+		<if test="reservationDateEnd !=null ">
+			and reservation_date_end &lt;= #{reservationDateEnd}
+		</if>
+		<if test="orderBy != null">
+			order by ${orderBy}
+		</if>
+		<if test="order == true">
+			asc
+		</if>
+		<if test="order == false">
+			desc
+		</if>
+		<if test="page != null">
+		
+		    limit ${page.pageNo*page.pageSize},#{page.pageSize}
+		</if>
+	</select>
+	<!-- 字段列表分页查询结束 -->
+	
+	<!-- 增加字段实体开始 -->
+	<insert id="saveEntity" parameterType="com.mingsoft.business.entity.ReservationEntity">
+		insert into t_reservation
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="userName != null">USER_NAME,</if>
+			<if test="phoneNum != null">PHONE_NUM,</if>
+			<if test="reservationDateBegin != null">RESERVATION_DATE_BEGIN,</if>
+			<if test="reservationDateEnd != null">RESERVATION_DATE_END,</if>
+			<if test="comment != null">COMMENT,</if>
+			<if test="createTime != null">CREATE_TIME,</if>
+			<if test="dealFlag != null">DEAL_FLAG,</if>
+			<if test="openId != null">OPEN_ID,</if>
+			<if test="modifyTime != null">MODIFY_TIME,</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="userName != null">#{userName},</if>
+			<if test="phoneNum != null">#{phoneNum},</if>
+			<if test="reservationDateBegin != null">#{reservationDateBegin},</if>
+			<if test="reservationDateEnd != null">#{reservationDateEnd},</if>
+			<if test="comment != null">#{comment}</if>
+			<if test="createTime != null">#{createTime}</if>
+			<if test="dealFlag != null">#{dealFlag}</if>
+			<if test="openId != null">#{openId}</if>
+			<if test="modifyTime != null">#{modifyTime}</if>
+			
+		</trim>
+	</insert>
+	
+	
+		
+		
+	<!-- 增加字段实体结束 -->
+	
+	<!-- 删除字段实体开始 -->
+	<delete id="deleteEntity" parameterType="int">
+		delete from t_reservation where id = #{id}
+	</delete>
+	<!-- 删除字段实体结束 -->
+		
+	<!-- 查询字段实体开始 -->
+	<select id="getReservationEntity" resultMap="resultMapField" parameterType="int">
+		select 
+			<include refid="column_list"/>
+		  		from t_reservation where id=#{id};
+	</select>
+	<!-- 查询字段实体结束 -->
+	
+	
+	<!-- 更新字段开始 -->
+	<update id="updateEntity" parameterType="com.mingsoft.business.entity.ReservationEntity">
+		update t_reservation
+		<set>
+			<if test="userName != null">USER_NAME=#{userName},</if>
+			<if test="phoneNum != null">PHONE_NUM=#{phoneNum},</if>
+			<if test="reservationDateBegin != null">RESERVATION_DATE_BEGIN=#{reservationDateBegin},</if>
+			<if test="reservationDateEnd != null">RESERVATION_DATE_END=#{reservationDateEnd},</if>
+			<if test="comment != null">COMMENT=#{comment}</if>
+			<if test="dealFlag != null">DEAL_FLAG=#{dealFlag}</if>
+			<if test="openId != null">OPEN_ID=#{openId}</if>
+			<if test="modifyTime != null">MODIFY_TIME=#{modifyTime}</if>
+		</set>
+		where id=#{id};
+	</update>
+	<!-- 更新字段结束 -->
+	
+</mapper>
